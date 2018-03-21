@@ -55,6 +55,10 @@ RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh \
 && sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list \
 && apt-get update \
 && apt-get install -y --no-install-recommends gcc libc6-dev make xutils-dev x11proto-core-dev openjdk-8-jdk \
+# for gnu/stubs-32.h (instead -D__x86_64__)
+#                                             libc6-dev-i386 \
+# for TestSuite-6.89 ?
+#                                             libxt-dev libxmu-headers libxaw7-dev flex bison \
 # clean up
 && apt-get dist-upgrade -y && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* 
 
