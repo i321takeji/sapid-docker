@@ -54,7 +54,7 @@ FROM ubuntu:16.04
 RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh \
 && sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list \
 && apt-get update \
-&& apt-get install -y --no-install-recommends gcc libc6-dev make xutils-dev openjdk-8-jdk \
+&& apt-get install -y --no-install-recommends gcc libc6-dev make xutils-dev x11proto-core-dev openjdk-8-jdk \
 # clean up
 && apt-get dist-upgrade -y && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* 
 
