@@ -14,8 +14,7 @@ RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Lin
 # packages upgrade
 && apt-get update && apt-get dist-upgrade -y \
 # install package for sapid build
-&& apt-get install -y g++ flex bison openjdk-8-jdk ant tk-dev tcl-dev xutils-dev libxml2-dev \
-   wget \
+&& apt-get install -y g++ flex bison openjdk-8-jdk ant tk-dev tcl-dev xutils-dev libxml2-dev wget \
 # set environment variables
 && touch "${envfile}" \
 && echo 'export JAVA_HOME=`readlink -m "$(which javac)" | sed -e "s/\/bin\/javac\$//g"`' >> ${envfile} \
