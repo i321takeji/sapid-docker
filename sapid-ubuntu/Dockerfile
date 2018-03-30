@@ -3,11 +3,14 @@ FROM ubuntu:16.04 AS sapid-dev
 # instead of /bin/dash
 RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh
 
-ARG work_dir="/sapid-work"
-ARG envfile="${work_dir}/sapid_env"
 ARG version="6.104.4"
+ARG work_dir="/sapid-work"
 ARG sapid_home="${work_dir}/Sapid-${version}"
+ARG sapid_test_defines="DEFINES=-D__x86_64__"
+#ARG envfile="${work_dir}/sapid_env"
+
 WORKDIR ${work_dir}
+COPY entrypoint.sh ${work_dir}
 
 # change apt source
 RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list \
@@ -16,15 +19,15 @@ RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Lin
 # install package for sapid build
 && apt-get install -y g++ flex bison openjdk-8-jdk ant tk-dev tcl-dev xutils-dev libxml2-dev wget \
 # set environment variables
-&& touch "${envfile}" \
-&& echo 'export JAVA_HOME=`readlink -m "$(which javac)" | sed -e "s/\/bin\/javac\$//g"`' >> ${envfile} \
-&& echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> ${envfile} \
-&& source ${envfile} \
+&& source ${work_dir}/entrypoint.sh \
+#&& touch "${envfile}" \
+#&& echo 'export JAVA_HOME=`readlink -m "$(which javac)" | sed -e "s/\/bin\/javac\$//g"`' >> ${envfile} \
+#&& echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> ${envfile} \
+#&& source ${envfile} \
 # download and config Sapid
 #&& VERSION=`wget http://www.sapid.org/FTP-CURRENT/'?C=M;O=D' -q -O - \
 #            | grep -o -E 'Sapid-[0-9]+\.[0-9]+\.[0-9]+' | head -1 | tr -d '\n'`
-&& wget http://www.sapid.org/FTP-CURRENT/Sapid-${version}.tar.gz \
-&& tar zxf Sapid-${version}.tar.gz \
+&& wget -O - http://www.sapid.org/FTP-CURRENT/Sapid-${version}.tar.gz | tar zxf - \
 && cd Sapid-${version} \
 && sed -i -e 's/^\/\* #define SapidTclIncDir\( \)\+\/usr\/local\/include \*\/$/#define SapidTclIncDir \/usr\/include\/tcl8\.6/g' \
           -e 's/^\/\* #define SapidTkIncDir\( \)\+\/usr\/local\/include \*\/$/#define SapidTkIncDir \/usr\/include\/tk8\.6/g'    \
@@ -42,17 +45,18 @@ RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Lin
 # test dhrystone-2.1
 && cd ${sapid_home}/test/dhrystone-2.1 \
 && mkSapid -a 2>&1 | tee LOG-MKSAPID \
-&& make DEFINES='-D__x86_64__' test-all 2>&1 | tee LOG-TESTALL \
+#&& make DEFINES='-D__x86_64__' test-all 2>&1 | tee LOG-TESTALL \
+&& make "${sapid_test_defines}" test-all 2>&1 | tee LOG-TESTALL \
 # test java-zip
 && cd ${sapid_home}/test/java-zip \
 && mkSapid -a 2>&1 | tee LOG-MKSAPID \
 && make test-all 2>&1 | tee LOG-TESTALL
 
-FROM ubuntu:16.04
 
+FROM ubuntu:16.04
 # instead of /bin/dash
-RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh \
-&& sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list \
+#RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh
+RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list \
 && apt-get update \
 && apt-get install -y --no-install-recommends gcc libc6-dev make xutils-dev x11proto-core-dev openjdk-8-jdk \
 # for gnu/stubs-32.h (instead -D__x86_64__)
@@ -67,10 +71,13 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 COPY --from=sapid-dev /usr/local/Sapid /usr/local/Sapid
 
 #RUN cp -rp /usr/local/Sapid/sample/test ~/test
-#&& source entrypoint.sh && cd ~/test/dhrystone-2.1 \ 
-#&& mkSapid -a 2>&1 | tee LOG-MKSAPID && make DEFINES=-D__x86_64__ test-all 2>&1 | tee LOG-TESTALL \
+#&& source entrypoint.sh \
+#&& cd ~/test/dhrystone-2.1 \
+#&& mkSapid -a 2>&1 | tee LOG-MKSAPID && make "${sapid_test_defines}" test-all 2>&1 | tee LOG-TESTALL \
 #&& cd ~/test/java-zip \
 #&& mkSapid -a 2>&1 | tee LOG-MKSAPID && make test-all 2>&1 | tee LOG-TESTALL
 
+ARG work_dir="/sapid-work"
+WORKDIR ${work_dir}
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["/bin/bash"]
