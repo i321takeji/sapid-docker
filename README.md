@@ -1,4 +1,6 @@
-# README #
+# Docker images for Sapid #
+
+ * Sapid http://www.sapid.org/
 
 ## Tags
  * `debian-6.104.4`
