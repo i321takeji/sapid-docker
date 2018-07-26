@@ -14,10 +14,18 @@ COPY entrypoint.sh ${work_dir}
 
 # change apt source
 RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list \
-# packages upgrade
-&& apt-get update && apt-get dist-upgrade -y \
-# install package for sapid build
-&& apt-get install -y g++ flex bison openjdk-8-jdk ant tk-dev tcl-dev xutils-dev libxml2-dev wget \
+# packages update and install package for sapid build
+&& apt-get update && apt-get install -y \
+  ant \
+  bison \
+  flex \
+  g++ \
+  libxml2-dev \
+  openjdk-8-jdk \
+  tcl-dev \
+  tk-dev \
+  wget \
+  xutils-dev \
 # set environment variables
 && source ${work_dir}/entrypoint.sh \
 #&& touch "${envfile}" \
@@ -57,14 +65,24 @@ FROM ubuntu:16.04
 # instead of /bin/dash
 #RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh
 RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list \
-&& apt-get update \
-&& apt-get install -y --no-install-recommends gcc libc6-dev make xutils-dev x11proto-core-dev openjdk-8-jdk \
-# for gnu/stubs-32.h (instead -D__x86_64__)
-#                                             libc6-dev-i386 \
+&& apt-get update && apt-get install -y --no-install-recommends \
+  gcc \
+  libc6-dev \
+  make \
+  openjdk-8-jdk \
+  xutils-dev \
+  x11proto-core-dev \
+#for gnu/stubs-32.h (instead -D__x86_64__)
+# libc6-dev-i386 \
 # for TestSuite-6.89 ?
-#                                             libxt-dev libxmu-headers libxaw7-dev flex bison \
-# clean up
-&& apt-get dist-upgrade -y && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* 
+# bison \
+# flex \
+# libxaw7-dev \
+# libxmu-headers \
+# libxt-dev \
+#clean up
+&& apt-get clean \
+&& rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 COPY entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh
