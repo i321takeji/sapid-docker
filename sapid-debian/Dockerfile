@@ -12,9 +12,17 @@ WORKDIR ${work_dir}
 COPY entrypoint.sh ${work_dir}
 
 # packages upgrade
-RUN apt-get update && apt-get dist-upgrade -y \
+RUN apt-get update && apt-get install -y \
 # install package for sapid build
-&& apt-get install -y g++ flex bison ant tk-dev tcl-dev xutils-dev libxml2-dev wget \
+  ant \
+  bison \
+  flex \
+  g++ \
+  libxml2-dev \
+  tcl-dev \
+  tk-dev \
+  wget \
+  xutils-dev \
 # set environment variables
 && source ${work_dir}/entrypoint.sh \
 # download sapid
@@ -47,15 +55,24 @@ RUN apt-get update && apt-get dist-upgrade -y \
 #FROM debian:stable-slim
 FROM openjdk:8-jdk-slim
 #RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh \
-RUN apt-get update \
-#&& apt-get install -y gcc libc6-dev make xutils-dev x11proto-core-dev openjdk-8-jdk \
-&& apt-get install -y --no-install-recommends gcc libc6-dev make xutils-dev x11proto-core-dev \
-## for gnu/stubs-32.h (instead -D__x86_64__)$
-#                                             libc6-dev-i386 \$
-## for TestSuite-6.89 ?$
-#                                             libxt-dev libxmu-headers libxaw7-dev flex bison \$
-# clean up
-&& apt-get dist-upgrade -y && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  gcc \
+  libc6-dev \
+  make \
+  xutils-dev \
+  x11proto-core-dev \
+# openjdk-8-jdk \
+## for gnu/stubs-32.h (instead -D__x86_64__)
+# libc6-dev-i386 \
+## for TestSuite-6.89 ?
+# bison \
+# flex \
+# libxaw7-dev \
+# libxmu-headers \
+# libxt-dev \
+#clean up
+&& apt-get clean \
+&& rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 COPY entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh
