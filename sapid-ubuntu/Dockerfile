@@ -1,6 +1,8 @@
-FROM ubuntu:16.04 AS sapid-dev
+FROM ubuntu:18.04 AS sapid-dev
 
 LABEL maintainer "bamboog130"
+
+ENV DEBIAN_FRONTEND noninteractive
 
 # instead of /bin/dash
 RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh
@@ -63,7 +65,7 @@ RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Lin
 && make test-all 2>&1 | tee LOG-TESTALL
 
 
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 # instead of /bin/dash
 #RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh
 RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list \
