@@ -1,5 +1,7 @@
 FROM ubuntu:16.04 AS sapid-dev
 
+LABEL maintainer "bamboog130"
+
 # instead of /bin/dash
 RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh
 
