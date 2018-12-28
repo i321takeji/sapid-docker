@@ -12,7 +12,7 @@ ARG sapid_test_defines="DEFINES=-D__x86_64__"
 #ARG envfile="${work_dir}/sapid_env"
 
 WORKDIR ${work_dir}
-COPY entrypoint.sh ${work_dir}
+COPY sapid_env.sh ${work_dir}
 
 # change apt source
 RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list \
@@ -29,7 +29,7 @@ RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Lin
   wget \
   xutils-dev \
 # set environment variables
-&& source ${work_dir}/entrypoint.sh \
+&& source ${work_dir}/sapid_env.sh \
 #&& touch "${envfile}" \
 #&& echo 'export JAVA_HOME=`readlink -m "$(which javac)" | sed -e "s/\/bin\/javac\$//g"`' >> ${envfile} \
 #&& echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> ${envfile} \
@@ -86,6 +86,7 @@ RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Lin
 && apt-get clean \
 && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
+COPY sapid_env.sh /usr/local/bin
 COPY entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh
 COPY --from=sapid-dev /usr/local/Sapid /usr/local/Sapid
