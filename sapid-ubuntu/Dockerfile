@@ -84,7 +84,10 @@ RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Lin
 # libxt-dev \
 #clean up
 && apt-get clean \
-&& rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+&& rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* \
+&& echo '\n# for Sapid' >> "/etc/skel/.profile" \
+&& echo 'umask 022' >> "/etc/skel/.profile" \
+&& echo '. /usr/local/bin/sapid_env.sh' >> "/etc/skel/.profile"
 
 COPY sapid_env.sh /usr/local/bin
 COPY entrypoint.sh /usr/local/bin

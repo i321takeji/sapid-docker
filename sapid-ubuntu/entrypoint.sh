@@ -9,8 +9,8 @@ if [ -z "${USERNAME}" ] || [ -z "${USERID}" ]; then
   . /usr/local/bin/sapid_env.sh && bash
 else
   useradd "${USERNAME}" -u "${USERID}" -m -d "/home/${USERNAME}" -s /bin/bash
-  echo 'umask 022' >> "/home/${USERNAME}/.profile"
-  echo '. /usr/local/bin/sapid_env.sh' >> "/home/${USERNAME}/.profile"
+#  echo 'umask 022' >> "/home/${USERNAME}/.profile"
+#  echo '. /usr/local/bin/sapid_env.sh' >> "/home/${USERNAME}/.profile"
 
   shift; shift
   CMD=""
