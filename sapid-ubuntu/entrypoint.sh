@@ -7,6 +7,10 @@ USERID="${SAPID_UID}"
 GROUPID="${SAPID_GID}"
 
 if [ -z "${USERNAME}" ] || [ -z "${USERID}" ] || [ -z "${GROUPID}" ]; then
+  if [ -f /xfiles/.Xauthority ]; then
+    ln -s /xfiles/.Xauthority /root
+  fi
+
   . /usr/local/bin/sapid_env.sh && bash
 else
   groupadd "${USERNAME}" -g "${GROUPID}"
@@ -15,8 +19,11 @@ else
 #  echo 'umask 022' >> "/home/${USERNAME}/.profile"
 #  echo '. /usr/local/bin/sapid_env.sh' >> "/home/${USERNAME}/.profile"
 
-  CMD=''
+  if [ -f /xfiles/.Xauthority ]; then
+    ln -s /xfiles/.Xauthority "/home/${USERNAME}"
+  fi
 
+  CMD=''
   if ! ( [ $# -eq 0 ] || ( [ $# -eq 1 ] && ( [ "$1" = 'sh' ] || [ "$1" = 'bash' ] ))); then
     CMD="-c '$@'"
   fi

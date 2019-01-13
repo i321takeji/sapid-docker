@@ -13,3 +13,6 @@ build-sapid-debian:
 
 build-sapid-ubuntu:
 	cd sapid-ubuntu && docker build --no-cache -t $(NAME)/sapid-docker:ubuntu-6.104.4 .
+
+build-sapid-ubuntu-eclipse: build-sapid-ubuntu
+	cd sapid-ubuntu && docker build --no-cache -t $(NAME)/sapid-docker_eclipse:ubuntu-6.104.4 -f Dockerfile_eclipse .

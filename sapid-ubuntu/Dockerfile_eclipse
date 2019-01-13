@@ -1,0 +1,19 @@
+FROM bamboog130/sapid-docker:ubuntu-6.104.4
+
+LABEL maintainer "bamboog130"
+
+# instead of /bin/dash
+#RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  libswt-gtk-4-java \
+  wget \
+  x11-apps \
+&& apt-get clean \
+&& rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* \
+&& wget -O - http://ftp.yz.yamagata-u.ac.jp/pub/eclipse/technology/epp/downloads/release/2018-12/R/eclipse-cpp-2018-12-R-linux-gtk-x86_64.tar.gz | tar zxf - -C /usr/local \
+&& ln -s /usr/local/eclipse/eclipse /usr/local/bin/eclipse
+
+ARG work_dir="/sapid-work"
+WORKDIR ${work_dir}
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["/bin/bash"]
