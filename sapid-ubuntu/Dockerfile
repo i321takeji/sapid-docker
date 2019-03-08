@@ -101,7 +101,11 @@ COPY --from=sapid-dev /usr/local/Sapid /usr/local/Sapid
 #&& cd ~/test/java-zip \
 #&& mkSapid -a 2>&1 | tee LOG-MKSAPID && make test-all 2>&1 | tee LOG-TESTALL
 
+ENV SAPID_USER sapider
+ENV SAPID_UID 99999
+ENV SAPID_GID 99999
+
 ARG work_dir="/sapid-work"
 WORKDIR ${work_dir}
 ENTRYPOINT ["entrypoint.sh"]
-CMD ["/bin/bash"]
+CMD ["bash"]

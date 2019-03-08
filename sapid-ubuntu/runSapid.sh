@@ -23,5 +23,5 @@ fi
 
 CMD="$@"
 
-#bash -c "docker run -i -t --rm ${WORK_VOLUME} ${IMAGE} ${USER} ${UID} ${CMD}"
-bash -c "docker run -i -t --rm ${WORK_VOLUME} ${IMAGE} sapider ${UID} ${CMD}"
+bash -c "docker run -i -t --rm ${WORK_VOLUME} -e SAPID_UID=`id -u` -e SAPID_GID=`id -g` ${IMAGE} ${CMD}"
+#bash -c "docker run -i -t --rm ${WORK_VOLUME} --env-file=./sapid.conf ${IMAGE} ${CMD}"
