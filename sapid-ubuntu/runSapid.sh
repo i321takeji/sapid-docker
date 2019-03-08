@@ -23,4 +23,5 @@ fi
 
 CMD="$@"
 
-bash -c "docker run -i -t --rm ${WORK_VOLUME} ${IMAGE} ${USER} ${UID} ${CMD}"
+#bash -c "docker run -i -t --rm ${WORK_VOLUME} ${IMAGE} ${USER} ${UID} ${CMD}"
+bash -c "docker run -i -t --rm ${WORK_VOLUME} ${IMAGE} sapider ${UID} ${CMD}"
