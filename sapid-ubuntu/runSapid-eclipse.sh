@@ -27,6 +27,7 @@ bash -c "docker run --rm -i -t --net host -e DISPLAY=${DISPLAY} \
                     -v ${HOME}/.Xauthority:/xfiles/.Xauthority:rw \
                     --name AAA \
                     ${WORK_VOLUME} \
-                    ${IMAGE} ${USER} ${UID} ${CMD}"
+                    -e SAPID_UID=`id -u` -e SAPID_GID=`id -g` \
+                    ${IMAGE} ${CMD}"
 
-#                   --hostname "${CONTAINAER_HOST}" \
+#                   --hostname sapid-container \
