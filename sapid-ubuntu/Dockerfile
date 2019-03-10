@@ -8,7 +8,7 @@ RUN mv /bin/sh /bin/sh.bak && ln -s /bin/bash /bin/sh
 ARG version="6.104.4"
 ARG work_dir="/sapid-work"
 ARG sapid_home="${work_dir}/Sapid-${version}"
-ARG sapid_test_defines="DEFINES=-D__x86_64__"
+ARG sapid_test_defines="-D__x86_64__"
 #ARG envfile="${work_dir}/sapid_env"
 
 WORKDIR ${work_dir}
@@ -17,7 +17,7 @@ COPY sapid_env.sh ${work_dir}
 # change apt source
 RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Linux/ubuntu/%g" /etc/apt/sources.list \
 # packages update and install package for sapid build
-&& apt-get update && apt-get install -y \
+&& apt-get update && apt-get install --no-install-recommends -y \
   ant \
   bison \
   flex \
@@ -55,13 +55,16 @@ RUN sed -i.bak -e "s%http://.*.ubuntu.com/ubuntu/%http://ftp.jaist.ac.jp/pub/Lin
 # test dhrystone-2.1
 && cd ${sapid_home}/test/dhrystone-2.1 \
 && mkSapid -a 2>&1 | tee LOG-MKSAPID \
-#&& make DEFINES='-D__x86_64__' test-all 2>&1 | tee LOG-TESTALL \
-&& make "${sapid_test_defines}" test-all 2>&1 | tee LOG-TESTALL \
+&& make DEFINES="${sapid_test_defines}" test-all 2>&1 | tee LOG-TEST-ALL \
 # test java-zip
 && cd ${sapid_home}/test/java-zip \
 && mkSapid -a 2>&1 | tee LOG-MKSAPID \
-&& make test-all 2>&1 | tee LOG-TESTALL
-
+&& make test-all 2>&1 | tee LOG-TEST-ALL \
+# test cxc
+&& cd ${sapid_home}/test/CXC/ts-basic \
+&& make MFLAGS=CFLAGS="${sapid_test_defines}" test-cxc-sdb4 2>&1 | tee LOG-TEST-CXC-SDB4 \
+&& make test-cxc-xpath 2>&1 | tee LOG-TEST-CXC-XPATH \
+&& make test-cxc-java 2>&1 | tee LOG-TEST-CXC-JAVA
 
 FROM ubuntu:16.04
 # instead of /bin/dash
